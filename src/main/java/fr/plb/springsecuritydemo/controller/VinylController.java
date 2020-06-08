@@ -25,4 +25,11 @@ public class VinylController {
         model.addObject("vinyls", vinylService.findAll());
         return model;
     }
+
+    @GetMapping("/all-admin")
+    public ModelAndView allAdmin() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("vinyls", vinylService.findAll());
+        return modelAndView;
+    }
 }
