@@ -5,14 +5,17 @@ import fr.plb.springsecuritydemo.service.dto.VinylDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * REST controller for managing {@link fr.plb.springsecuritydemo.domain.Vinyl}.
@@ -47,7 +50,9 @@ public class VinylResource {
 
     @GetMapping("/vinyls")
     public ResponseEntity<List<VinylDTO>> getAllVinyls() {
-        return ResponseEntity.ok().body(vinylService.findAll());
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.SECONDS))
+                .body(vinylService.findAll());
     }
 
     @GetMapping("/vinyls/{id}")
