@@ -1,4 +1,4 @@
-package fr.plb.springfluxdemo.service;
+package fr.plb.springsecuritydemo.service;
 
 import org.springframework.stereotype.Service;
 
