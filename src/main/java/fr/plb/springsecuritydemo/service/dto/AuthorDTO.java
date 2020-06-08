@@ -1,4 +1,4 @@
-package fr.plb.springfluxdemo.service.dto;
+package fr.plb.springsecuritydemo.service.dto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
