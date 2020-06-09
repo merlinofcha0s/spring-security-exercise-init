@@ -1,5 +1,6 @@
 package fr.plb.springsecuritydemo.config;
 
+import fr.plb.springsecuritydemo.service.security.PersistentLoginsTokenService;
 import fr.plb.springsecuritydemo.service.security.UserDetailsServiceMongo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +16,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private UserDetailsServiceMongo userDetailsServiceMongo;
+    private PersistentLoginsTokenService persistentLoginsTokenService;
 
-    public SecurityConfiguration(UserDetailsServiceMongo userDetailsServiceMongo) {
+    public SecurityConfiguration(UserDetailsServiceMongo userDetailsServiceMongo,
+                                 PersistentLoginsTokenService persistentLoginsTokenService) {
         this.userDetailsServiceMongo = userDetailsServiceMongo;
+        this.persistentLoginsTokenService = persistentLoginsTokenService;
     }
 
     @Override
@@ -26,6 +30,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/register").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .rememberMe().key("lkdfslkflsdk§è§è§rerieui")
+                .rememberMeCookieName("mon-cookie-remember")
+                .tokenRepository(persistentLoginsTokenService)
                 .and()
                 .httpBasic();
     }
