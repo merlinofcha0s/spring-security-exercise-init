@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: vinyl
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: s.oGw673RcSt6hle2LCgE4Uom4
