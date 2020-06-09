@@ -19,7 +19,7 @@ public class AccountResource {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO registerAccount(@RequestBody UserDTO userDTO) {
+    public UserDTO registerAccount(@Valid @RequestBody UserDTO userDTO) {
        return userService.registerUser(userDTO);
     }
 }

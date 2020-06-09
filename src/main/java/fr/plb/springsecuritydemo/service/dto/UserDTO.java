@@ -1,5 +1,11 @@
 package fr.plb.springsecuritydemo.service.dto;
 
+import fr.plb.springsecuritydemo.service.dto.validation.PasswordPolicy;
+import fr.plb.springsecuritydemo.service.dto.validation.UniqueUsername;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -7,10 +13,16 @@ public class UserDTO implements Serializable {
 
     private String id;
 
+    @NotBlank
+    @Size(min = 1, max = 50)
+    @UniqueUsername
     private String login;
 
+    @Email
+    @Size(min = 5, max = 254)
     private String email;
 
+    @PasswordPolicy
     private String password;
 
     public String getId() {
