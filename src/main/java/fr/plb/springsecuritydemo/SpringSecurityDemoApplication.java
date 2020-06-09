@@ -31,33 +31,6 @@ public class SpringSecurityDemoApplication {
     }
 
     @Bean
-    public ServletWebServerFactory servletContainer() {
-        TomcatServletWebServerFactory serverFactory = new TomcatServletWebServerFactory() {
-            @Override
-            protected void postProcessContext(Context context) {
-                SecurityConstraint securityConstraint = new SecurityConstraint();
-                securityConstraint.setUserConstraint("CONFIDENTIAL");
-                SecurityCollection collection = new SecurityCollection();
-                collection.addPattern("/");
-                securityConstraint.addCollection(collection);
-                context.addConstraint(securityConstraint);
-            }
-        };
-        serverFactory.addAdditionalTomcatConnectors(redirectConnector());
-        return serverFactory;
-    }
-
-    private Connector redirectConnector() {
-        Connector connector = new Connector(TomcatReactiveWebServerFactory.DEFAULT_PROTOCOL);
-        connector.setScheme("http");
-        connector.setPort(8080);
-        connector.setSecure(false);
-        connector.setRedirectPort(8443);
-        return connector;
-    }
-
-
-    @Bean
     CommandLineRunner data(VinylRepository vinylRepository, AuthorRepository authorRepository) {
         return args -> {
             Author authorSaved = authorRepository.save(new Author("Linkin Park", "", Instant.now()));
