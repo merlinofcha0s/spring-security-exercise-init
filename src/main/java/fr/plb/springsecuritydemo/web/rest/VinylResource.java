@@ -7,6 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -67,5 +72,21 @@ public class VinylResource {
         log.debug("REST request to delete Vinyl : {}", id);
         vinylService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/vinyls/{username}/get")
+    @PreAuthorize("@isVinylOwner.check(#username)")
+    public ResponseEntity<List<VinylDTO>> getVinylsbyUser(@PathVariable String username) {
+        return ResponseEntity.ok(vinylService.getVinylByUser(username));
+    }
+
+    @GetMapping("/vinyls-for-admin/{username}")
+    public ResponseEntity<List<VinylDTO>> getVinylUser(@PathVariable String username) {
+        return ResponseEntity.ok(vinylService.getVinylByUser(username));
+    }
+
+    @GetMapping("/vinyls-user")
+    public ResponseEntity<List<VinylDTO>> getVinylUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(vinylService.getVinylByUser(userDetails.getUsername()));
     }
 }

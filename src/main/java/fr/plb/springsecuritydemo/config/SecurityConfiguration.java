@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Order(2)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private UserDetailsServiceMongo userDetailsServiceMongo;
@@ -28,7 +30,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/register").permitAll()
+                .mvcMatchers("/api/register").permitAll()
+                .mvcMatchers("/api/vinyls").hasRole("ADMIN")
+                .mvcMatchers("/api/vinyls-for-admin/*")
+                .access("isFullyAuthenticated() && hasRole('ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -37,7 +42,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeCookieName("mon-cookie-remember")
                 .tokenRepository(persistentLoginsTokenService)
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login")
+                .and().oauth2Login();
     }
 
     @Override

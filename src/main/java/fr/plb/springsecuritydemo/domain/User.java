@@ -3,7 +3,9 @@ package fr.plb.springsecuritydemo.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -31,8 +33,20 @@ public class User {
     @Indexed
     private String email;
 
+    @DBRef
+    @Field("vinyls")
+    private Set<Vinyl> vinyls = new HashSet<>();
+
     @JsonIgnore
     private Set<Authority> authorities = new HashSet<>();
+
+    public Set<Vinyl> getVinyls() {
+        return vinyls;
+    }
+
+    public void setVinyls(Set<Vinyl> vinyls) {
+        this.vinyls = vinyls;
+    }
 
     public String getId() {
         return id;

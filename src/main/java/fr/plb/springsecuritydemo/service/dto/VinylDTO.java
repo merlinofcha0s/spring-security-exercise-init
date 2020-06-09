@@ -17,6 +17,8 @@ public class VinylDTO implements Serializable {
 
     private String authorId;
 
+    private String username;
+
     public VinylDTO() {
     }
 

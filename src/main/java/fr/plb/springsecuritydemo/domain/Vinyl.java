@@ -26,6 +26,10 @@ public class Vinyl {
     @JsonIgnoreProperties("vinyls")
     private Author author;
 
+    @DBRef
+    @Field("user")
+    private User user;
+
     public Vinyl() {
     }
 
@@ -71,6 +75,14 @@ public class Vinyl {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

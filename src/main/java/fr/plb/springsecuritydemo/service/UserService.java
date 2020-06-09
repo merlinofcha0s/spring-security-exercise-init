@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -42,6 +43,10 @@ public class UserService {
         newUser.setAuthorities(authorities);
         User userSaved = userRepository.save(newUser);
         return userMapper.toDto(userSaved);
+    }
+
+    public Optional<UserDTO> getUserByUsername(String username) {
+        return userRepository.findOneByLogin(username).map(userMapper::toDto);
     }
 
 }

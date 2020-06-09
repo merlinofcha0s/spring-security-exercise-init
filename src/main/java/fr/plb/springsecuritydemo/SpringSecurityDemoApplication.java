@@ -19,8 +19,10 @@ import org.springframework.boot.web.embedded.tomcat.TomcatReactiveWebServerFacto
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.Set;
 
 @SpringBootApplication
@@ -50,20 +52,9 @@ public class SpringSecurityDemoApplication {
     }
 
     @Bean
-    CommandLineRunner dataUser(UserRepository userRepository, AuthorityRepository authorityRepository) {
+    CommandLineRunner dataUser(UserRepository userRepository, AuthorityRepository authorityRepository,
+                               PasswordEncoder passwordEncoder, VinylRepository vinylRepository) {
         return args -> {
-            User user = new User();
-            user.setLogin("toto");
-            user.setEmail("toto@toto.com");
-            user.setPassword("{noop}password");
-            user.setAuthorities(Set.of(new Authority("ROLE_USER")));
-
-            User admin = new User();
-            admin.setLogin("totoadmin");
-            admin.setEmail("totoadmin@toto.com");
-            admin.setPassword("{noop}god");
-            admin.setAuthorities(Set.of(new Authority("ROLE_ADMIN")));
-
             Authority adminAuthority = new Authority();
             adminAuthority.setName("ROLE_ADMIN");
             Authority userAuthority = new Authority();
@@ -73,8 +64,30 @@ public class SpringSecurityDemoApplication {
             authorityRepository.save(userAuthority);
             authorityRepository.findAll().forEach(System.out::println);
 
+            User user = new User();
+            user.setLogin("toto");
+            user.setEmail("toto@toto.com");
+            user.setPassword(passwordEncoder.encode("password"));
+            user.setAuthorities(Set.of(authorityRepository.findById("ROLE_USER").get()));
             userRepository.save(user);
+
+            Optional<Vinyl> in_the_end = vinylRepository.findBySongName("In the end");
+            in_the_end.get().setUser(user);
+            vinylRepository.save(in_the_end.get());
+            user.getVinyls().add(vinylRepository.findBySongName("In the end").get());
+
+            User admin = new User();
+            admin.setLogin("totoadmin");
+            admin.setEmail("totoadmin@toto.com");
+            admin.setPassword(passwordEncoder.encode("god"));
+            admin.setAuthorities(Set.of(authorityRepository.findById("ROLE_ADMIN").get()));
             userRepository.save(admin);
+
+            Optional<Vinyl> points_of_authority = vinylRepository.findBySongName("Points of Authority");
+            points_of_authority.get().setUser(admin);
+            vinylRepository.save(points_of_authority.get());
+            admin.getVinyls().add(vinylRepository.findBySongName("Points of Authority").get());
+
             userRepository.findAll().forEach(System.out::println);
         };
     }
